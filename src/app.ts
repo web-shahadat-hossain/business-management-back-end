@@ -5,7 +5,13 @@ import globalErrorHandler from './middleware/globalErrorHandler';
 const app: Application = express();
 
 // cors
-app.use(cors());
+app.use(
+  cors({
+    origin: ['http://localhost:3000', 'localhost:3000'], // Set specific origin
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
+);
 
 //data parse
 app.use(express.json());
