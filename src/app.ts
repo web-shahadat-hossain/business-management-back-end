@@ -7,7 +7,10 @@ const app: Application = express();
 // cors
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'localhost:3000'], // Set specific origin
+    origin: [
+      'https://admin-8yvr607xg-developersahadats-projects.vercel.app',
+      'admin-8yvr607xg-developersahadats-projects.vercel.app',
+    ], // Set specific origin
     credentials: true,
     optionsSuccessStatus: 200,
   })
