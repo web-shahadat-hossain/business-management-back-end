@@ -37,7 +37,7 @@ const createSell = (data) => __awaiter(void 0, void 0, void 0, function* () {
             yield main_model_1.Profit.updateMany({
                 amount: Number(oldProfit[0].amount) + Number(profit),
             });
-            result = yield sell_model_1.Sell.create(data);
+            result = yield sell_model_1.Sell.create(Object.assign(Object.assign({}, data), { profit: profit }));
             yield session.commitTransaction();
             yield session.endSession();
         }

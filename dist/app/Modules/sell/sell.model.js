@@ -20,6 +20,9 @@ const sellSchema = new mongoose_1.Schema({
         type: Number,
         required: true,
     },
+    profit: {
+        type: Number,
+    },
 }, {
     timestamps: true,
     toJSON: {
