@@ -20,6 +20,9 @@ const sellSchema = new Schema<ISell>(
       type: Number,
       required: true,
     },
+    profit: {
+      type: Number,
+    },
   },
   {
     timestamps: true,

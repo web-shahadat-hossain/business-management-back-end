@@ -33,7 +33,7 @@ const createSell = async (data: ISell) => {
         amount: Number(oldProfit[0].amount) + Number(profit),
       });
 
-      result = await Sell.create(data);
+      result = await Sell.create({ ...data, profit: profit });
       await session.commitTransaction();
       await session.endSession();
     } catch (err) {

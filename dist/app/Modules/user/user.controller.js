@@ -38,65 +38,6 @@ const createUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
         data: result,
     });
 }));
-const findOneUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email } = req.params;
-    const result = yield user_services_1.userServices.findOneUser(email);
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
-        success: true,
-        message: 'User create successfully!',
-        data: result,
-    });
-}));
-// delete User
-const userDelete = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = req.params.id;
-    const result = yield user_services_1.userServices.deleteUsers(id);
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
-        success: true,
-        message: 'User deleted successfully!!!',
-        data: result,
-    });
-}));
-// update User
-const userUpdate = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = req.params.id;
-    const updateData = req.body;
-    const result = yield user_services_1.userServices.updateUsers(id, updateData);
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
-        success: true,
-        message: 'User updated successfully!!!',
-        data: result,
-    });
-}));
-// Admin User
-const userAdmin = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = req.params.id;
-    const result = yield user_services_1.userServices.adminUser(id);
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
-        success: true,
-        message: 'Admin successfully!!!',
-        data: result,
-    });
-}));
-// all User data get
-const userAllData = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield user_services_1.userServices.getAllUsers();
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
-        success: true,
-        message: 'User retrieved successfully!!!',
-        data: result,
-    });
-}));
 exports.userController = {
     createUser,
-    findOneUser,
-    userDelete,
-    userUpdate,
-    userAllData,
-    userAdmin
 };

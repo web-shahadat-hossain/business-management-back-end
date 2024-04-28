@@ -5,6 +5,7 @@ const buy_router_1 = require("../app/Modules/buy/buy.router");
 const cost_router_1 = require("../app/Modules/cost/cost.router");
 const main_router_1 = require("../app/Modules/main/main.router");
 const sell_router_1 = require("../app/Modules/sell/sell.router");
+const user_route_1 = require("../app/Modules/user/user.route");
 const modulesRoutes = [
     {
         path: '/balance',
@@ -25,6 +26,10 @@ const modulesRoutes = [
     {
         path: '/cost',
         route: cost_router_1.costRouters.router,
+    },
+    {
+        path: '/create',
+        route: user_route_1.userRouters.router,
     },
 ];
 exports.default = modulesRoutes;

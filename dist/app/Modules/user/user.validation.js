@@ -24,5 +24,5 @@ const updateUser = zod_1.z.object({
 });
 exports.UserValidation = {
     createUserZodSchema,
-    updateUser
+    updateUser,
 };

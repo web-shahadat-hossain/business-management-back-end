@@ -41,11 +41,8 @@ const loginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
         expires: new Date(Date.now() + sevenDays),
         secure: config_1.default.env === 'production',
         signed: true,
-        secret: "keyboard cat",
+        secret: 'keyboard cat',
     };
-    res.setHeader('Set-Cookie', `refreshToken=${refreshToken}`);
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.cookie('refreshToken', refreshToken, cookieOption);
     (0, sendResponse_1.default)(res.cookie('refreshToken', refreshToken, cookieOption), {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -64,7 +61,7 @@ const verifyUserToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
     });
 }));
 const logoutUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.clearCookie("refreshToken");
+    res.clearCookie('refreshToken');
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -77,5 +74,5 @@ const logoutUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
 exports.authController = {
     loginUser,
     verifyUserToken,
-    logoutUser
+    logoutUser,
 };

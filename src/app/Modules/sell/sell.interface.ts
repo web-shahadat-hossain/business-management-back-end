@@ -3,4 +3,5 @@ export type ISell = {
   buyRate: number;
   sellRate: number;
   rmb: number;
+  profit: number;
 };

@@ -10,6 +10,8 @@ app.use(
     origin: [
       'https://admin-8yvr607xg-developersahadats-projects.vercel.app',
       'admin-8yvr607xg-developersahadats-projects.vercel.app',
+      'http://localhost:3000',
+      'localhost:3000',
     ], // Set specific origin
     credentials: true,
     optionsSuccessStatus: 200,
