@@ -20,10 +20,10 @@ const app = (0, express_1.default)();
 // cors
 app.use((0, cors_1.default)({
     origin: [
-        'https://admin-8yvr607xg-developersahadats-projects.vercel.app',
-        'admin-8yvr607xg-developersahadats-projects.vercel.app',
         'http://localhost:3000',
         'localhost:3000',
+        'https://admin-8yvr607xg-developersahadats-projects.vercel.app',
+        'admin-8yvr607xg-developersahadats-projects.vercel.app',
     ], // Set specific origin
     credentials: true,
     optionsSuccessStatus: 200,
