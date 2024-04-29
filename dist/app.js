@@ -20,10 +20,9 @@ const app = (0, express_1.default)();
 // cors
 app.use((0, cors_1.default)({
     origin: [
-        'http://localhost:3000',
-        'localhost:3000',
-        'https://rmb-management.vercel.app/',
-        'rmb-management.vercel.app/',
+        'https://next-js-rmb-management.vercel.app/',
+        'next-js-rmb-management.vercel.app',
+        'https://next-js-rmb-management.vercel.app',
     ], // Set specific origin
     credentials: true,
     optionsSuccessStatus: 200,
