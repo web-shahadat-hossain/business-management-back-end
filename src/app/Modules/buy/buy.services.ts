@@ -51,8 +51,51 @@ const getBuy = async (): Promise<IBuy[] | null> => {
 
   return result;
 };
+const deleteBuy = async (id: string): Promise<IBuy | null> => {
+  const buyHistory = await Buy.findOne({ _id: id });
+  const mainAmount = await MainBalance.find({});
+  const oldRMB = await RMB.find({});
+
+  const amount = Number(mainAmount[0].mainBalance);
+
+  if (!buyHistory) {
+    throw new apiError(400, 'Failed to buy!');
+  }
+
+  const totalAmount = Number(buyHistory?.rmb) * Number(buyHistory?.rate);
+
+  const session = await mongoose.startSession();
+  let result = null;
+
+  try {
+    session.startTransaction();
+
+    await MainBalance.updateMany({
+      mainBalance: Number(amount) + Number(totalAmount),
+    });
+    await RMB.updateMany({
+      rmb: Number(oldRMB[0].rmb) - Number(buyHistory.rmb),
+    });
+
+    result = await Buy.findByIdAndDelete({ _id: id });
+
+    await session.commitTransaction();
+    await session.endSession();
+  } catch (err) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw err;
+  }
+
+  if (!result) {
+    throw new apiError(400, 'Failed to buy!');
+  }
+
+  return result;
+};
 
 export const buyServices = {
   createBuy,
   getBuy,
+  deleteBuy,
 };

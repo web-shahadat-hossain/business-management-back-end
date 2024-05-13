@@ -10,6 +10,7 @@ const buy_controller_1 = require("./buy.controller");
 const router = express_1.default.Router();
 router.post('/', buy_controller_1.buyController.createBuy);
 router.get('/', buy_controller_1.buyController.getBuy);
+router.delete('/:id', buy_controller_1.buyController.deleteBuy);
 exports.buyRouters = {
     router,
 };

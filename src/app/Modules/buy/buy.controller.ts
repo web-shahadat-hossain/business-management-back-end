@@ -25,8 +25,21 @@ const getBuy = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const deleteBuy = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  const result = await buyServices.deleteBuy(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Delete Successfully!',
+    data: result,
+  });
+});
 
 export const buyController = {
   createBuy,
   getBuy,
+  deleteBuy,
 };

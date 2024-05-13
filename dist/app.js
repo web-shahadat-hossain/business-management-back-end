@@ -18,6 +18,7 @@ const routers_1 = __importDefault(require("./routers"));
 const globalErrorHandler_1 = __importDefault(require("./middleware/globalErrorHandler"));
 const app = (0, express_1.default)();
 // cors
+// app.use(cors());
 app.use((0, cors_1.default)({
     origin: [
         'https://next-js-rmb-management.vercel.app/',

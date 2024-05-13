@@ -25,34 +25,64 @@ const createSell = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const oldRMB = yield main_model_1.RMB.find({});
     const oldProfit = yield main_model_1.Profit.find({});
     const amount = Number(oldMainAmount[0].mainBalance);
-    if (Number(oldRMB[0].rmb) >= Number(data.rmb)) {
-        const session = yield mongoose_1.default.startSession();
-        let result = null;
-        try {
-            session.startTransaction();
-            yield main_model_1.MainBalance.updateMany({
-                mainBalance: Number(amount) + Number(sellAmount),
-            });
-            yield main_model_1.RMB.updateMany({ rmb: Number(oldRMB[0].rmb) - Number(data.rmb) });
-            yield main_model_1.Profit.updateMany({
-                amount: Number(oldProfit[0].amount) + Number(profit),
-            });
-            result = yield sell_model_1.Sell.create(Object.assign(Object.assign({}, data), { profit: profit }));
-            yield session.commitTransaction();
-            yield session.endSession();
+    if (sellAmount >= buyAmount) {
+        if (Number(oldRMB[0].rmb) >= Number(data.rmb)) {
+            const session = yield mongoose_1.default.startSession();
+            let result = null;
+            try {
+                session.startTransaction();
+                yield main_model_1.MainBalance.updateMany({
+                    mainBalance: Number(amount) + Number(sellAmount),
+                });
+                yield main_model_1.RMB.updateMany({ rmb: Number(oldRMB[0].rmb) - Number(data.rmb) });
+                yield main_model_1.Profit.updateMany({
+                    amount: Number(oldProfit[0].amount) + Number(profit),
+                });
+                result = yield sell_model_1.Sell.create(Object.assign(Object.assign({}, data), { profit: profit }));
+                yield session.commitTransaction();
+                yield session.endSession();
+            }
+            catch (err) {
+                yield session.abortTransaction();
+                yield session.endSession();
+                throw err;
+            }
+            if (!result) {
+                throw new apiError_1.default(400, 'Failed to Sell!');
+            }
+            return result;
         }
-        catch (err) {
-            yield session.abortTransaction();
-            yield session.endSession();
-            throw err;
+        else {
+            throw new apiError_1.default(400, 'আপনার কাছে পর্যাপ্ত RMB নেই!');
         }
-        if (!result) {
-            throw new apiError_1.default(400, 'Failed to Sell!');
-        }
-        return result;
     }
     else {
-        throw new apiError_1.default(400, 'আপনার কাছে পর্যাপ্ত RMB নেই!');
+        if (Number(oldRMB[0].rmb) >= Number(data.rmb)) {
+            const session = yield mongoose_1.default.startSession();
+            let result = null;
+            try {
+                session.startTransaction();
+                yield main_model_1.MainBalance.updateMany({
+                    mainBalance: Number(amount) + Number(sellAmount),
+                });
+                yield main_model_1.RMB.updateMany({ rmb: Number(oldRMB[0].rmb) - Number(data.rmb) });
+                result = yield sell_model_1.Sell.create(Object.assign(Object.assign({}, data), { profit: profit }));
+                yield session.commitTransaction();
+                yield session.endSession();
+            }
+            catch (err) {
+                yield session.abortTransaction();
+                yield session.endSession();
+                throw err;
+            }
+            if (!result) {
+                throw new apiError_1.default(400, 'Failed to Sell!');
+            }
+            return result;
+        }
+        else {
+            throw new apiError_1.default(400, 'আপনার কাছে পর্যাপ্ত RMB নেই!');
+        }
     }
 });
 const getSell = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -62,7 +92,47 @@ const getSell = () => __awaiter(void 0, void 0, void 0, function* () {
     }
     return result;
 });
+const deleteSell = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const sellHistory = yield sell_model_1.Sell.findOne({ _id: id });
+    const mainAmount = yield main_model_1.MainBalance.find({});
+    const oldRMB = yield main_model_1.RMB.find({});
+    const oldProfit = yield main_model_1.Profit.find({});
+    const amount = Number(mainAmount[0].mainBalance);
+    if (!sellHistory) {
+        throw new apiError_1.default(400, 'Failed to sell!');
+    }
+    const totalAmount = Number(sellHistory === null || sellHistory === void 0 ? void 0 : sellHistory.rmb) * Number(sellHistory === null || sellHistory === void 0 ? void 0 : sellHistory.sellRate);
+    const buyAmount = Number(totalAmount) -
+        Number(sellHistory === null || sellHistory === void 0 ? void 0 : sellHistory.rmb) * Number(sellHistory === null || sellHistory === void 0 ? void 0 : sellHistory.buyRate);
+    const session = yield mongoose_1.default.startSession();
+    let result = null;
+    try {
+        session.startTransaction();
+        yield main_model_1.MainBalance.updateMany({
+            mainBalance: Number(amount) - Number(totalAmount),
+        });
+        yield main_model_1.RMB.updateMany({
+            rmb: Number(oldRMB[0].rmb) + Number(sellHistory.rmb),
+        });
+        yield main_model_1.Profit.updateMany({
+            amount: Number(oldProfit[0].amount) - Number(buyAmount),
+        });
+        result = yield sell_model_1.Sell.findByIdAndDelete({ _id: id });
+        yield session.commitTransaction();
+        yield session.endSession();
+    }
+    catch (err) {
+        yield session.abortTransaction();
+        yield session.endSession();
+        throw err;
+    }
+    if (!result) {
+        throw new apiError_1.default(400, 'Failed to buy!');
+    }
+    return result;
+});
 exports.sellServices = {
     createSell,
     getSell,
+    deleteSell,
 };

@@ -5,6 +5,7 @@ import globalErrorHandler from './middleware/globalErrorHandler';
 const app: Application = express();
 
 // cors
+// app.use(cors());
 app.use(
   cors({
     origin: [

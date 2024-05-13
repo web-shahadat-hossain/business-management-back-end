@@ -10,6 +10,7 @@ const sell_controller_1 = require("./sell.controller");
 const router = express_1.default.Router();
 router.post('/', sell_controller_1.sellController.createSell);
 router.get('/', sell_controller_1.sellController.getSell);
+router.delete('/:id', sell_controller_1.sellController.sellDelete);
 exports.sellRouters = {
     router,
 };

@@ -16,39 +16,72 @@ const createSell = async (data: ISell) => {
 
   const amount = Number(oldMainAmount[0].mainBalance);
 
-  if (Number(oldRMB[0].rmb) >= Number(data.rmb)) {
-    const session = await mongoose.startSession();
-    let result = null;
+  if (sellAmount >= buyAmount) {
+    if (Number(oldRMB[0].rmb) >= Number(data.rmb)) {
+      const session = await mongoose.startSession();
+      let result = null;
 
-    try {
-      session.startTransaction();
+      try {
+        session.startTransaction();
 
-      await MainBalance.updateMany({
-        mainBalance: Number(amount) + Number(sellAmount),
-      });
+        await MainBalance.updateMany({
+          mainBalance: Number(amount) + Number(sellAmount),
+        });
 
-      await RMB.updateMany({ rmb: Number(oldRMB[0].rmb) - Number(data.rmb) });
+        await RMB.updateMany({ rmb: Number(oldRMB[0].rmb) - Number(data.rmb) });
 
-      await Profit.updateMany({
-        amount: Number(oldProfit[0].amount) + Number(profit),
-      });
+        await Profit.updateMany({
+          amount: Number(oldProfit[0].amount) + Number(profit),
+        });
 
-      result = await Sell.create({ ...data, profit: profit });
-      await session.commitTransaction();
-      await session.endSession();
-    } catch (err) {
-      await session.abortTransaction();
-      await session.endSession();
-      throw err;
+        result = await Sell.create({ ...data, profit: profit });
+        await session.commitTransaction();
+        await session.endSession();
+      } catch (err) {
+        await session.abortTransaction();
+        await session.endSession();
+        throw err;
+      }
+
+      if (!result) {
+        throw new apiError(400, 'Failed to Sell!');
+      }
+
+      return result;
+    } else {
+      throw new apiError(400, 'আপনার কাছে পর্যাপ্ত RMB নেই!');
     }
-
-    if (!result) {
-      throw new apiError(400, 'Failed to Sell!');
-    }
-
-    return result;
   } else {
-    throw new apiError(400, 'আপনার কাছে পর্যাপ্ত RMB নেই!');
+    if (Number(oldRMB[0].rmb) >= Number(data.rmb)) {
+      const session = await mongoose.startSession();
+      let result = null;
+
+      try {
+        session.startTransaction();
+
+        await MainBalance.updateMany({
+          mainBalance: Number(amount) + Number(sellAmount),
+        });
+
+        await RMB.updateMany({ rmb: Number(oldRMB[0].rmb) - Number(data.rmb) });
+
+        result = await Sell.create({ ...data, profit: profit });
+        await session.commitTransaction();
+        await session.endSession();
+      } catch (err) {
+        await session.abortTransaction();
+        await session.endSession();
+        throw err;
+      }
+
+      if (!result) {
+        throw new apiError(400, 'Failed to Sell!');
+      }
+
+      return result;
+    } else {
+      throw new apiError(400, 'আপনার কাছে পর্যাপ্ত RMB নেই!');
+    }
   }
 };
 
@@ -62,7 +95,57 @@ const getSell = async (): Promise<ISell[] | null> => {
   return result;
 };
 
+const deleteSell = async (id: string): Promise<ISell | null> => {
+  const sellHistory = await Sell.findOne({ _id: id });
+  const mainAmount = await MainBalance.find({});
+  const oldRMB = await RMB.find({});
+  const oldProfit = await Profit.find({});
+
+  const amount = Number(mainAmount[0].mainBalance);
+
+  if (!sellHistory) {
+    throw new apiError(400, 'Failed to sell!');
+  }
+
+  const totalAmount = Number(sellHistory?.rmb) * Number(sellHistory?.sellRate);
+  const buyAmount =
+    Number(totalAmount) -
+    Number(sellHistory?.rmb) * Number(sellHistory?.buyRate);
+
+  const session = await mongoose.startSession();
+  let result = null;
+
+  try {
+    session.startTransaction();
+
+    await MainBalance.updateMany({
+      mainBalance: Number(amount) - Number(totalAmount),
+    });
+    await RMB.updateMany({
+      rmb: Number(oldRMB[0].rmb) + Number(sellHistory.rmb),
+    });
+    await Profit.updateMany({
+      amount: Number(oldProfit[0].amount) - Number(buyAmount),
+    });
+    result = await Sell.findByIdAndDelete({ _id: id });
+
+    await session.commitTransaction();
+    await session.endSession();
+  } catch (err) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw err;
+  }
+
+  if (!result) {
+    throw new apiError(400, 'Failed to buy!');
+  }
+
+  return result;
+};
+
 export const sellServices = {
   createSell,
   getSell,
+  deleteSell,
 };

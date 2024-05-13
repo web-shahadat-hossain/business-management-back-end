@@ -56,7 +56,41 @@ const getBuy = () => __awaiter(void 0, void 0, void 0, function* () {
     }
     return result;
 });
+const deleteBuy = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const buyHistory = yield buy_model_1.Buy.findOne({ _id: id });
+    const mainAmount = yield main_model_1.MainBalance.find({});
+    const oldRMB = yield main_model_1.RMB.find({});
+    const amount = Number(mainAmount[0].mainBalance);
+    if (!buyHistory) {
+        throw new apiError_1.default(400, 'Failed to buy!');
+    }
+    const totalAmount = Number(buyHistory === null || buyHistory === void 0 ? void 0 : buyHistory.rmb) * Number(buyHistory === null || buyHistory === void 0 ? void 0 : buyHistory.rate);
+    const session = yield mongoose_1.default.startSession();
+    let result = null;
+    try {
+        session.startTransaction();
+        yield main_model_1.MainBalance.updateMany({
+            mainBalance: Number(amount) + Number(totalAmount),
+        });
+        yield main_model_1.RMB.updateMany({
+            rmb: Number(oldRMB[0].rmb) - Number(buyHistory.rmb),
+        });
+        result = yield buy_model_1.Buy.findByIdAndDelete({ _id: id });
+        yield session.commitTransaction();
+        yield session.endSession();
+    }
+    catch (err) {
+        yield session.abortTransaction();
+        yield session.endSession();
+        throw err;
+    }
+    if (!result) {
+        throw new apiError_1.default(400, 'Failed to buy!');
+    }
+    return result;
+});
 exports.buyServices = {
     createBuy,
     getBuy,
+    deleteBuy,
 };
