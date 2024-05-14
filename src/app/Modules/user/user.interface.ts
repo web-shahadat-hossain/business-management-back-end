@@ -7,3 +7,7 @@ export type IUser = {
   contactNo?: number;
   address?: string;
 };
+export type IUB = {
+  userName: string;
+  balance: number;
+};

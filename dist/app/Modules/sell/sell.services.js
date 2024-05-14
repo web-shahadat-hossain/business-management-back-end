@@ -17,6 +17,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const apiError_1 = __importDefault(require("../../../errors/apiError"));
 const main_model_1 = require("../main/main.model");
 const sell_model_1 = require("./sell.model");
+const buy_model_1 = require("../buy/buy.model");
 const createSell = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const sellAmount = Number(data === null || data === void 0 ? void 0 : data.rmb) * Number(data === null || data === void 0 ? void 0 : data.sellRate);
     const buyAmount = Number(data === null || data === void 0 ? void 0 : data.rmb) * Number(data === null || data === void 0 ? void 0 : data.buyRate);
@@ -34,6 +35,9 @@ const createSell = (data) => __awaiter(void 0, void 0, void 0, function* () {
                 yield main_model_1.MainBalance.updateMany({
                     mainBalance: Number(amount) + Number(sellAmount),
                 });
+                yield buy_model_1.Buy.updateOne({
+                    _id: data.userName,
+                }, { status: true });
                 yield main_model_1.RMB.updateMany({ rmb: Number(oldRMB[0].rmb) - Number(data.rmb) });
                 yield main_model_1.Profit.updateMany({
                     amount: Number(oldProfit[0].amount) + Number(profit),
@@ -66,6 +70,9 @@ const createSell = (data) => __awaiter(void 0, void 0, void 0, function* () {
                     mainBalance: Number(amount) + Number(sellAmount),
                 });
                 yield main_model_1.RMB.updateMany({ rmb: Number(oldRMB[0].rmb) - Number(data.rmb) });
+                yield buy_model_1.Buy.updateOne({
+                    _id: data.userName,
+                }, { status: true });
                 result = yield sell_model_1.Sell.create(Object.assign(Object.assign({}, data), { profit: profit }));
                 yield session.commitTransaction();
                 yield session.endSession();

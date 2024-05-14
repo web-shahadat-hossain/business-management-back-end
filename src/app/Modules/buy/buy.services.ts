@@ -6,7 +6,7 @@ import { Buy } from './buy.model';
 
 const createBuy = async (data: IBuy) => {
   const totalAmount = Number(data?.rmb) * Number(data?.rate);
-
+  data.status = false;
   const mainAmount = await MainBalance.find({});
   const oldRMB = await RMB.find({});
 

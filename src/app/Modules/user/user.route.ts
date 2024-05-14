@@ -9,6 +9,8 @@ router.post(
   validateRequest(UserValidation.createUserZodSchema),
   userController.createUser
 );
+router.post('/balance', userController.createUserBalance);
+router.get('/balance', userController.getUserBalance);
 
 export const userRouters = {
   router,

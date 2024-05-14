@@ -16,6 +16,10 @@ const buySchema = new mongoose_1.Schema({
         type: Number,
         required: true,
     },
+    status: {
+        type: Boolean,
+        required: true,
+    },
 }, {
     timestamps: true,
     toJSON: {

@@ -3,9 +3,17 @@ import apiError from '../../../errors/apiError';
 import { MainBalance } from '../main/main.model';
 import { IBalance } from './balance.interface';
 import { Balance } from './balance.modal';
+import { UB } from '../user/user.model';
 
-const createBalance = async (data: IBalance): Promise<IBalance | null> => {
+const createBalance = async (data: any): Promise<IBalance | null> => {
   const mainAmount = await MainBalance.find({});
+  const userFind = await UB.findOne({ userName: data.userName });
+
+  const balanceData = {
+    fullName: data.fullName,
+    mainBalance: data.mainBalance,
+    message: data.message,
+  };
 
   const amount = Number(mainAmount[0].mainBalance) + Number(data.mainBalance);
 
@@ -16,8 +24,12 @@ const createBalance = async (data: IBalance): Promise<IBalance | null> => {
     session.startTransaction();
 
     await MainBalance.updateMany({ mainBalance: amount });
+    await UB.updateOne(
+      { userName: data.userName },
+      { balance: Number(userFind?.balance) + Number(data.mainBalance) }
+    );
 
-    result = await Balance.create(data);
+    result = await Balance.create(balanceData);
 
     await session.commitTransaction();
     await session.endSession();

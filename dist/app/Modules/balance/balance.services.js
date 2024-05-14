@@ -17,15 +17,23 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const apiError_1 = __importDefault(require("../../../errors/apiError"));
 const main_model_1 = require("../main/main.model");
 const balance_modal_1 = require("./balance.modal");
+const user_model_1 = require("../user/user.model");
 const createBalance = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const mainAmount = yield main_model_1.MainBalance.find({});
+    const userFind = yield user_model_1.UB.findOne({ userName: data.userName });
+    const balanceData = {
+        fullName: data.fullName,
+        mainBalance: data.mainBalance,
+        message: data.message,
+    };
     const amount = Number(mainAmount[0].mainBalance) + Number(data.mainBalance);
     const session = yield mongoose_1.default.startSession();
     let result = null;
     try {
         session.startTransaction();
         yield main_model_1.MainBalance.updateMany({ mainBalance: amount });
-        result = yield balance_modal_1.Balance.create(data);
+        yield user_model_1.UB.updateOne({ userName: data.userName }, { balance: Number(userFind === null || userFind === void 0 ? void 0 : userFind.balance) + Number(data.mainBalance) });
+        result = yield balance_modal_1.Balance.create(balanceData);
         yield session.commitTransaction();
         yield session.endSession();
     }

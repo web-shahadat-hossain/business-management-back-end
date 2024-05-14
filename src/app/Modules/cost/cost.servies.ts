@@ -1,12 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose';
 import apiError from '../../../errors/apiError';
 import { MainBalance } from '../main/main.model';
 import { ICost } from './cost.interface';
 import { Cost } from './cost.mode';
+import { UB } from '../user/user.model';
 
-const createCost = async (data: ICost): Promise<ICost | null> => {
+const createCost = async (data: any): Promise<ICost | null> => {
+  const userFind = await UB.findOne({ userName: data.userName });
+
   const mainAmount = await MainBalance.find({});
-
+  const costData = {
+    fullName: data.fullName,
+    costAmount: data.costAmount,
+    message: data.message,
+  };
   const amount = Number(mainAmount[0].mainBalance) - Number(data.costAmount);
 
   if (Number(amount) >= Number(data.costAmount)) {
@@ -17,8 +25,11 @@ const createCost = async (data: ICost): Promise<ICost | null> => {
       session.startTransaction();
 
       await MainBalance.updateMany({ mainBalance: amount });
-
-      result = await Cost.create(data);
+      await UB.updateOne(
+        { userName: data.userName },
+        { balance: Number(userFind?.balance) - Number(data.costAmount) }
+      );
+      result = await Cost.create(costData);
 
       await session.commitTransaction();
       await session.endSession();

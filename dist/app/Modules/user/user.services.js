@@ -61,7 +61,7 @@ const adminUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
         throw new apiError_1.default(http_status_1.default.NOT_FOUND, 'User not found');
     }
     const result = yield user_model_1.User.findOneAndUpdate({ _id: id }, {
-        role: role_1.ENUM_ROLE.ADMIN
+        role: role_1.ENUM_ROLE.ADMIN,
     }, {
         new: true,
     });
@@ -78,11 +78,25 @@ const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_model_1.User.find({});
     return result;
 });
+const createUserBalance = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_model_1.UB.create(user);
+    if (!result) {
+        throw new apiError_1.default(400, 'Failed to create User Balance!');
+    }
+    return result;
+});
+const getUserBalance = () => __awaiter(void 0, void 0, void 0, function* () {
+    // pagination code start here
+    const result = yield user_model_1.UB.find({});
+    return result;
+});
 exports.userServices = {
     createUser,
     findOneUser,
     deleteUsers,
     updateUsers,
     getAllUsers,
-    adminUser
+    adminUser,
+    createUserBalance,
+    getUserBalance,
 };

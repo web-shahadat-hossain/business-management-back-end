@@ -3,6 +3,7 @@ import apiError from '../../../errors/apiError';
 import { MainBalance, Profit, RMB } from '../main/main.model';
 import { ISell } from './sell.interface';
 import { Sell } from './sell.model';
+import { Buy } from '../buy/buy.model';
 
 const createSell = async (data: ISell) => {
   const sellAmount = Number(data?.rmb) * Number(data?.sellRate);
@@ -11,6 +12,7 @@ const createSell = async (data: ISell) => {
   const profit = Number(sellAmount) - Number(buyAmount);
 
   const oldMainAmount = await MainBalance.find({});
+
   const oldRMB = await RMB.find({});
   const oldProfit = await Profit.find({});
 
@@ -27,6 +29,12 @@ const createSell = async (data: ISell) => {
         await MainBalance.updateMany({
           mainBalance: Number(amount) + Number(sellAmount),
         });
+        await Buy.updateOne(
+          {
+            _id: data.userName,
+          },
+          { status: true }
+        );
 
         await RMB.updateMany({ rmb: Number(oldRMB[0].rmb) - Number(data.rmb) });
 
@@ -64,7 +72,12 @@ const createSell = async (data: ISell) => {
         });
 
         await RMB.updateMany({ rmb: Number(oldRMB[0].rmb) - Number(data.rmb) });
-
+        await Buy.updateOne(
+          {
+            _id: data.userName,
+          },
+          { status: true }
+        );
         result = await Sell.create({ ...data, profit: profit });
         await session.commitTransaction();
         await session.endSession();

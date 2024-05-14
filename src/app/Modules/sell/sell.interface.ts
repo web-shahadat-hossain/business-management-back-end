@@ -4,4 +4,5 @@ export type ISell = {
   sellRate: number;
   rmb: number;
   profit: number;
+  userName: string;
 };

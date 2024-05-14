@@ -23,6 +23,9 @@ const sellSchema = new Schema<ISell>(
     profit: {
       type: Number,
     },
+    userName: {
+      type: String,
+    },
   },
   {
     timestamps: true,

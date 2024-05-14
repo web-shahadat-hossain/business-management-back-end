@@ -16,6 +16,10 @@ const buySchema = new Schema<IBuy>(
       type: Number,
       required: true,
     },
+    status: {
+      type: Boolean,
+      required: true,
+    },
   },
   {
     timestamps: true,

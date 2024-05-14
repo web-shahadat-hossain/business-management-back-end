@@ -19,6 +19,7 @@ const main_model_1 = require("../main/main.model");
 const buy_model_1 = require("./buy.model");
 const createBuy = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const totalAmount = Number(data === null || data === void 0 ? void 0 : data.rmb) * Number(data === null || data === void 0 ? void 0 : data.rate);
+    data.status = false;
     const mainAmount = yield main_model_1.MainBalance.find({});
     const oldRMB = yield main_model_1.RMB.find({});
     const amount = Number(mainAmount[0].mainBalance);

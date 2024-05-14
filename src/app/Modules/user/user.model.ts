@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IUser } from './user.interface';
+import { IUB, IUser } from './user.interface';
 import bcrypt from 'bcrypt';
 import config from '../../../config';
 
@@ -35,3 +35,13 @@ userSchema.pre('save', async function (next) {
 });
 
 export const User = model<IUser>('Users', userSchema);
+
+const UBSchema = new Schema<IUB>(
+  {
+    userName: { type: String, required: true },
+    balance: { type: Number, required: true },
+  },
+  { timestamps: true }
+);
+
+export const UB = model<IUB>('UB', UBSchema);

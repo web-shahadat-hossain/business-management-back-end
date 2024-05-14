@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
+exports.UB = exports.User = void 0;
 const mongoose_1 = require("mongoose");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const config_1 = __importDefault(require("../../../config"));
@@ -42,3 +42,8 @@ userSchema.pre('save', function (next) {
     });
 });
 exports.User = (0, mongoose_1.model)('Users', userSchema);
+const UBSchema = new mongoose_1.Schema({
+    userName: { type: String, required: true },
+    balance: { type: Number, required: true },
+}, { timestamps: true });
+exports.UB = (0, mongoose_1.model)('UB', UBSchema);
